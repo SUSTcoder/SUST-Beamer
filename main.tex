@@ -1,0 +1,1067 @@
+\documentclass[12pt,aspectratio=43]{beamer}
+
+% 苏州科技大学组会报告 Beamer 模板。
+% 使用建议：
+% 1. 普通使用者优先修改下面的“报告信息”“章节标题”和 document 环境内的 frame。
+% 2. 如需微调封面、尾页、页眉页脚，再改对应的“layout knobs”参数。
+% 3. 本模板依赖本目录下的 fonts/、assets/、images/、references.bib。
+% 4. 使用 XeLaTeX 编译：xelatex main && bibtex main && xelatex main && xelatex main
+
+\usepackage[fontset=none]{ctex}
+\usepackage{fontspec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage[numbers,sort&compress]{natbib}
+
+\usetheme{default}
+
+% ---------- Resource paths ----------
+% 在本目录下编译 main.tex；字体、图片、参考文献均位于本目录。
+\newcommand{\SUSTFontPath}{./fonts/}
+\graphicspath{{./}}
+
+% ---------- Font files ----------
+% 本模板使用 XeLaTeX 编译。SimKai/SimHei/SimSun 字体文件放在本目录下的 fonts/。
+% 若换用系统字体，可去掉 Path=\SUSTFontPath，并把字体名改为系统中实际安装的名称。
+\setCJKmainfont[Path=\SUSTFontPath,BoldFont=SimHei.TTF]{SimKai.TTF}
+\setCJKsansfont[Path=\SUSTFontPath]{SimKai.TTF}
+\setCJKmonofont[Path=\SUSTFontPath]{SimSun.TTC}
+\newCJKfontfamily\SUSTKai[Path=\SUSTFontPath,BoldFont=SimHei.TTF]{SimKai.TTF}
+\newCJKfontfamily\SUSTHei[Path=\SUSTFontPath]{SimHei.TTF}
+\newcommand{\SUSTEmph}[1]{{\SUSTHei #1}}
+
+% ---------- User quick-edit area: thesis information ----------
+% 这里是最常修改的区域。换成自己的报告内容后，通常只需要改这一组命令。
+% \ReportTitle    : 封面主标题；始终占用两行空间。一行/两行/长标题都适用。
+% \ReportSubtitle : 封面右侧副标题、目录页左上角、页脚第三栏共用文本。
+% \AuthorName     : 汇报人姓名。
+% \SupervisorName : 指导教师。
+% \DepartmentName : 学校中文名；用于 PDF 元信息。
+% \DepartmentShortName : 正文页眉右侧使用，过长时可写成学校简称。
+% \DepartmentEnglishName : 学校英文名；用于 PDF 元信息。
+% \CollegeName    : 学院中文名；封面/尾页报告信息块使用。
+% \MajorName      : 专业名称；封面/尾页报告信息块使用。
+% \ReportDate    : 报告日期；封面/尾页左下角和页脚中栏使用。
+\newcommand{\ReportTitle}{基于深度学习的图像识别方法研究}
+\newcommand{\ReportSubtitle}{组会报告}
+\newcommand{\AuthorName}{张三}
+\newcommand{\SupervisorName}{李四}
+\newcommand{\DepartmentName}{苏州科技大学}
+\newcommand{\DepartmentShortName}{苏州科技大学}
+\newcommand{\DepartmentEnglishName}{Suzhou University of Science and Technology}
+\newcommand{\CollegeName}{电子与信息工程学院}
+\newcommand{\MajorName}{计算机科学与技术}
+\newcommand{\ReportDate}{2026 年 10 月}
+
+% Beamer 的短标题也使用副标题，保证目录页左上角显示“组会报告”。
+\title[\ReportSubtitle]{\ReportTitle}
+\author[\AuthorName]{\AuthorName}
+\institute[\DepartmentName]{\DepartmentName}
+\date[\ReportDate]{\ReportDate}
+
+% ---------- Theme colors ----------
+% 主题色集中在这里。若需要换学院/学校配色，优先调整这一组颜色。
+% SUSTBlue 控制主蓝色块；SUSTTopNavy 控制深蓝页眉和页脚；SUSTLightBlue 控制浅底色。
+\definecolor{SUSTBlack}{HTML}{000000}
+\definecolor{SUSTBlue}{RGB}{21,71,166}
+\definecolor{SUSTTopNavy}{RGB}{8,33,82}
+\definecolor{SUSTTitleBlue}{RGB}{19,64,150}
+\definecolor{SUSTBlockBody}{RGB}{231,235,242}
+\definecolor{SUSTBlockLine}{RGB}{63,105,183}
+\definecolor{SUSTLightBlue}{RGB}{238,244,252}
+\definecolor{SUSTNav}{RGB}{193,206,231}
+
+% ---------- Beamer base style ----------
+% 这一段设置正文、标题、block、页眉页脚的默认字体和颜色。
+% 普通内容页的左右边距由 \setbeamersize 控制；需要更密集/更舒展时改这里。
+\setbeamersize{text margin left=0.68cm,text margin right=0.68cm}
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{structure}{fg=SUSTBlue}
+\setbeamercolor{frametitle}{fg=white,bg=SUSTTitleBlue}
+\setbeamercolor{frametitle right}{fg=white,bg=SUSTBlack}
+\setbeamercolor{block title}{fg=white,bg=SUSTTitleBlue}
+\setbeamercolor{block body}{fg=black,bg=SUSTBlockBody}
+\setbeamercolor{alerted text}{fg=SUSTBlue}
+\setbeamercolor{section in head/foot}{fg=white,bg=SUSTBlack}
+\setbeamercolor{section in head/foot shaded}{fg=white!52,bg=SUSTBlack}
+\setbeamercolor{subsection in head/foot}{fg=white,bg=SUSTBlue}
+\setbeamercolor{subsection in head/foot shaded}{fg=white!62,bg=SUSTBlue}
+\setbeamercolor{author in head/foot}{fg=white,bg=SUSTTopNavy}
+\setbeamercolor{title in head/foot}{fg=white,bg=SUSTBlue}
+\setbeamercolor{date in head/foot}{fg=white,bg=SUSTTitleBlue}
+\setbeamercolor{institute in head/foot}{fg=white,bg=SUSTBlue}
+\setbeamercolor{headline in head/foot}{fg=white,bg=}
+
+\setbeamerfont{frametitle}{family=\SUSTKai,size=\Large}
+\setbeamerfont{framesubtitle}{family=\SUSTKai,size=\normalsize}
+\setbeamerfont{block title}{family=\SUSTKai,size=\normalsize}
+\setbeamerfont{block body}{family=\SUSTKai,size=\normalsize}
+\setbeamerfont{normal text}{family=\SUSTKai,size=\normalsize}
+\setbeamerfont{section in toc}{family=\SUSTKai,size=\large}
+\setbeamerfont{subsection in toc}{family=\SUSTKai,size=\normalsize}
+\setbeamerfont{section in head/foot}{family=\SUSTKai,size=\fontsize{5.5}{6.2}\selectfont}
+\setbeamerfont{subsection in head/foot}{family=\SUSTKai,size=\fontsize{5.2}{5.8}\selectfont}
+\setbeamerfont{institute in head/foot}{family=\SUSTKai,size=\fontsize{6.2}{6.8}\selectfont}
+\setbeamerfont{author in head/foot}{family=\SUSTKai,size=\scriptsize}
+\setbeamerfont{title in head/foot}{family=\SUSTKai,size=\scriptsize}
+\setbeamerfont{date in head/foot}{family=\SUSTKai,size=\scriptsize}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{SUSTLightBlue},
+  keywordstyle=\bfseries\color{SUSTBlue},
+  commentstyle=\itshape\color{black!48},
+  stringstyle=\color{SUSTBlue!72!black},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  frame=single,
+  rulecolor=\color{SUSTBlockLine},
+  framerule=.35pt,
+  framesep=4pt,
+  numbers=left,
+  numbersep=6pt,
+  numberstyle=\tiny\color{black!45},
+  breaklines=true,
+  xleftmargin=1.2em,
+  xrightmargin=.3em
+}
+
+\newcommand{\SUSTLogo}{%
+  \raisebox{\dimexpr-.5\height+.42ex\relax}{\includegraphics[height=.58cm]{assets/sust_logo_white.png}}%
+}
+\newcommand{\SUSTHeaderBrand}{%
+  \raisebox{\dimexpr-.5\height+.42ex\relax}{\includegraphics[height=.58cm]{assets/sust_name_cn_white.png}}%
+  \hspace{.12cm}%
+  \SUSTLogo%
+}
+\newcommand{\SUSTDrawBrand}[1]{%
+  \node[
+    anchor=west,
+    inner sep=0pt,
+    outer sep=0pt
+  ] (#1-logo) at (.28cm,-.78cm)
+    {\includegraphics[height=1.08cm]{assets/sust_logo_blue.png}};
+  \node[
+    anchor=west,
+    inner sep=0pt,
+    outer sep=0pt
+  ] at ([xshift=.16cm]#1-logo.east)
+    {\includegraphics[height=1.08cm]{assets/sust_name_blue.png}};
+}
+\newcommand{\SUSTDrawCornerMotto}[1]{%
+  \node[
+    anchor=south east,
+    inner sep=0pt,
+    outer sep=0pt,
+    opacity=#1
+  ] at ([xshift=-.55cm,yshift=.50cm]\paperwidth,-\paperheight)
+    {\includegraphics[width=3.55cm]{assets/sust_motto_navy.png}};
+}
+
+% ---------- Cover and ending page layout knobs ----------
+% 这一组参数控制封面和结束页的版式。只想替换内容时不用动这里。
+% \SUSTCoverTitleWidth            : 主标题文本宽度；越小越容易换行。
+% \SUSTCoverTitleBandTopY         : 蓝色标题块上边缘高度。
+% \SUSTCoverTitleBandHeight       : 蓝色标题块总高度。
+% \SUSTCoverTitleTopPadding       : 主标题上边距；配合蓝色块高度让两行标题视觉居中。
+% \SUSTCoverTitleLineHeight       : 单行文本行高。
+% \SUSTCoverTitleTwoLineHeight    : 主标题固定占位的两行高度（不随内容变化）。
+% \SUSTCoverTitleSecondLineOffset : 副标题横线对齐第二行视觉中线的位置。
+% \SUSTCoverInfoTopWidth          : 报告信息浅色梯形的上边宽度。
+% \SUSTCoverInfoInsetDepth        : 梯形向蓝色标题块嵌入的深度。
+% \SUSTCoverInfoTextTopGap        : 报告信息文字与梯形上边缘的距离。
+\newsavebox{\SUSTCoverTitleBox}
+\newsavebox{\SUSTCoverInfoBox}
+\newcommand{\SUSTCoverTitleFont}{\SUSTKai\fontsize{19.5}{25.5}\selectfont}
+\newlength{\SUSTCoverTitleWidth}
+\setlength{\SUSTCoverTitleWidth}{.78\paperwidth}
+\newlength{\SUSTCoverInfoWidth}
+\setlength{\SUSTCoverInfoWidth}{.66\paperwidth}
+\newlength{\SUSTCoverInfoTopWidth}
+\setlength{\SUSTCoverInfoTopWidth}{.72\paperwidth}
+\newlength{\SUSTCoverTitleBandTopY}
+\setlength{\SUSTCoverTitleBandTopY}{-2.06cm}
+\newlength{\SUSTCoverTitleBandHeight}
+\setlength{\SUSTCoverTitleBandHeight}{2.90cm}
+\newlength{\SUSTCoverTitleTopPadding}
+\setlength{\SUSTCoverTitleTopPadding}{.38cm}
+\newlength{\SUSTCoverTitleTopY}
+\newlength{\SUSTCoverTitleLineHeight}
+\setlength{\SUSTCoverTitleLineHeight}{25.5pt}
+\newlength{\SUSTCoverTitleTwoLineHeight}
+\setlength{\SUSTCoverTitleTwoLineHeight}{2\SUSTCoverTitleLineHeight}
+\newlength{\SUSTCoverTitleSecondLineOffset}
+\setlength{\SUSTCoverTitleSecondLineOffset}{1.25\SUSTCoverTitleLineHeight}
+\newlength{\SUSTCoverTitleSecondLineY}
+\newlength{\SUSTCoverTitleBottomY}
+\newlength{\SUSTCoverInfoTopY}
+\newlength{\SUSTCoverInfoBottomY}
+\newlength{\SUSTCoverInfoInsetDepth}
+\setlength{\SUSTCoverInfoInsetDepth}{.60cm}
+\newlength{\SUSTCoverInfoTextTopGap}
+\setlength{\SUSTCoverInfoTextTopGap}{.12cm}
+\newlength{\SUSTCoverInfoBottomGap}
+\setlength{\SUSTCoverInfoBottomGap}{.16cm}
+\newlength{\SUSTCoverInfoEdgeGap}
+\setlength{\SUSTCoverInfoEdgeGap}{1.6pt}
+\newlength{\SUSTCoverInfoBandTopY}
+\newlength{\SUSTCoverInfoBandBottomY}
+\newlength{\SUSTCoverInfoBandHeight}
+\newlength{\SUSTCoverInfoInsetRun}
+\newlength{\SUSTCoverInfoBottomRun}
+\newlength{\SUSTThanksTitleTopY}
+\setlength{\SUSTThanksTitleTopY}{-2.06cm}
+\newlength{\SUSTThanksTitleBottomY}
+\setlength{\SUSTThanksTitleBottomY}{-5.00cm}
+\newlength{\SUSTThanksTextCenterY}
+% 根据当前论文题目和报告信息，先排成不可见盒子，再计算蓝色标题块和浅色信息块的位置。
+% 标题始终占用两行的固定空间（由 \SUSTCoverTitleTwoLineHeight 定义），下面的梯形信息块位置固定。
+\newcommand{\SUSTPrepareCoverLayout}{%
+  \sbox{\SUSTCoverTitleBox}{%
+    \parbox[t]{\SUSTCoverTitleWidth}{%
+      \raggedright
+      {\SUSTCoverTitleFont\color{white}%
+       \setlength{\baselineskip}{\SUSTCoverTitleLineHeight}%
+       \setlength{\lineskip}{0pt}%
+       \setlength{\parskip}{0pt}%
+       \ReportTitle\par}%
+    }%
+  }%
+  \sbox{\SUSTCoverInfoBox}{%
+    \parbox[t]{\SUSTCoverInfoWidth}{%
+      \raggedright
+      {\SUSTKai\fontsize{8.8}{10.2}\selectfont
+        \begin{tabular}{@{}r@{\hspace{.16cm}}l@{}}
+          {\color{SUSTBlue!70!SUSTTopNavy}汇报人：} & \AuthorName \\
+          {\color{SUSTBlue!70!SUSTTopNavy}指导教师：} & \SupervisorName \\
+          {\color{SUSTBlue!70!SUSTTopNavy}学院：} & \CollegeName \\
+          {\color{SUSTBlue!70!SUSTTopNavy}专业：} & \MajorName
+        \end{tabular}}%
+    }%
+  }%
+  \setlength{\SUSTCoverTitleTopY}{\dimexpr\SUSTCoverTitleBandTopY-\SUSTCoverTitleTopPadding\relax}%
+  \setlength{\SUSTCoverTitleSecondLineY}{\dimexpr\SUSTCoverTitleTopY-\SUSTCoverTitleSecondLineOffset\relax}%
+  \setlength{\SUSTCoverTitleBottomY}{\dimexpr\SUSTCoverTitleBandTopY-\SUSTCoverTitleBandHeight\relax}%
+  \setlength{\SUSTCoverInfoTopY}{\dimexpr\SUSTCoverTitleBottomY+\SUSTCoverInfoInsetDepth-\SUSTCoverInfoTextTopGap\relax}%
+  \setlength{\SUSTCoverInfoBottomY}{\dimexpr\SUSTCoverInfoTopY-\ht\SUSTCoverInfoBox-\dp\SUSTCoverInfoBox-\SUSTCoverInfoBottomGap\relax}%
+}
+% 绘制封面/尾页的浅色报告信息块。
+% 第一个参数是蓝色块底边，第二个参数是信息块底边。
+% 主体使用 SUSTBlue!10；第二个 fill 用页面底色切出一条细边，形成嵌入蓝色块的留白。
+\newcommand{\SUSTDrawInfoBand}[2]{%
+  \setlength{\SUSTCoverInfoBandTopY}{\dimexpr#1+\SUSTCoverInfoInsetDepth\relax}%
+  \setlength{\SUSTCoverInfoBandBottomY}{#2}%
+  \setlength{\SUSTCoverInfoBandHeight}{\dimexpr\SUSTCoverInfoBandTopY-\SUSTCoverInfoBandBottomY\relax}%
+  \setlength{\SUSTCoverInfoInsetRun}{.5\SUSTCoverInfoInsetDepth}%
+  \setlength{\SUSTCoverInfoBottomRun}{.5\SUSTCoverInfoBandHeight}%
+  \fill[SUSTBlue!10]
+    (0,\SUSTCoverInfoBandTopY)
+    -- (\SUSTCoverInfoTopWidth,\SUSTCoverInfoBandTopY)
+    -- (\dimexpr\SUSTCoverInfoTopWidth+\SUSTCoverInfoBottomRun\relax,\SUSTCoverInfoBandBottomY)
+    -- (0,\SUSTCoverInfoBandBottomY)
+    -- cycle;
+  \fill[SUSTLightBlue]
+    (0,\SUSTCoverInfoBandTopY)
+    -- (\dimexpr\SUSTCoverInfoTopWidth+\SUSTCoverInfoEdgeGap\relax,\SUSTCoverInfoBandTopY)
+    -- ++ (\SUSTCoverInfoInsetRun,-\SUSTCoverInfoInsetDepth)
+    -- ++ (-\SUSTCoverInfoEdgeGap,0)
+    -- ++ (\dimexpr-\SUSTCoverInfoInsetRun-.5\SUSTCoverInfoEdgeGap\relax,\dimexpr\SUSTCoverInfoInsetDepth-\SUSTCoverInfoEdgeGap\relax)
+    -- (0,\dimexpr\SUSTCoverInfoBandTopY-\SUSTCoverInfoEdgeGap\relax)
+    -- cycle;
+}
+
+\newlength{\SUSTHeadlineHeight}
+\setlength{\SUSTHeadlineHeight}{.64cm}
+\newlength{\SUSTFrameTitleHeight}
+\setlength{\SUSTFrameTitleHeight}{.72cm}
+\newlength{\SUSTFrameTitleBottom}
+\setlength{\SUSTFrameTitleBottom}{\dimexpr\SUSTHeadlineHeight+\SUSTFrameTitleHeight\relax}
+\newlength{\SUSTFrameTitleCenter}
+\setlength{\SUSTFrameTitleCenter}{\dimexpr\SUSTHeadlineHeight+.5\SUSTFrameTitleHeight\relax}
+
+% ---------- Header and footer quick settings ----------
+% 目录页还没有进入任何 section，此时页眉左侧显示 \SUSTHeaderIntroText。
+% 默认让它跟封面副标题一致，即“组会报告”；如需显示别的文字，改下一行。
+\newcommand{\SUSTHeaderIntroText}{\ReportSubtitle}
+
+% 页脚先分成左右两个半区：左半区再均分为姓名和日期，右半区放报告类型和页码。
+% 右半区内部沿用主模板 .36:.08 的比例，也就是在右半区中按 36:8 分配。
+% 需要改变页脚显示内容时，优先改这三个命令，不必改 footline 模板本体。
+\newcommand{\SUSTFooterLeftText}{\insertshortauthor}
+\newcommand{\SUSTFooterMiddleText}{\insertshortdate}
+\newcommand{\SUSTFooterRightText}{\ReportSubtitle}
+\newlength{\SUSTFootlineLeftSegmentWidth}
+\setlength{\SUSTFootlineLeftSegmentWidth}{.25\paperwidth}
+\newlength{\SUSTFootlineLeftHalfWidth}
+\setlength{\SUSTFootlineLeftHalfWidth}{.5\paperwidth}
+\newlength{\SUSTFootlineRightTitleWidth}
+\setlength{\SUSTFootlineRightTitleWidth}{.40909\paperwidth}
+\newlength{\SUSTFootlinePageWidth}
+\setlength{\SUSTFootlinePageWidth}{\dimexpr\paperwidth-\SUSTFootlineLeftHalfWidth-\SUSTFootlineRightTitleWidth\relax}
+\newlength{\SUSTFootlineHeight}
+\setlength{\SUSTFootlineHeight}{1.55ex}
+\newlength{\SUSTFootlineDepth}
+\setlength{\SUSTFootlineDepth}{.45ex}
+\newlength{\SUSTFootlineTotalHeight}
+\setlength{\SUSTFootlineTotalHeight}{\dimexpr\SUSTFootlineHeight+\SUSTFootlineDepth\relax}
+\newlength{\SUSTFootlineNameCenterX}
+\setlength{\SUSTFootlineNameCenterX}{.125\paperwidth}
+\newlength{\SUSTFootlineDateCenterX}
+\setlength{\SUSTFootlineDateCenterX}{.375\paperwidth}
+\newlength{\SUSTFootlineRightTitleCenterX}
+\setlength{\SUSTFootlineRightTitleCenterX}{.704545\paperwidth}
+\newlength{\SUSTFootlineTextCenterY}
+\setlength{\SUSTFootlineTextCenterY}{.5\SUSTFootlineTotalHeight}
+\newcommand{\SUSTFallbackTotalFrameNumber}{27}
+\newcommand{\SUSTTotalFrameNumber}{%
+  \ifnum\inserttotalframenumber=1
+    \SUSTFallbackTotalFrameNumber
+  \else
+    \inserttotalframenumber
+  \fi
+}
+
+\pgfdeclarehorizontalshading{sust@headlineshade}{\SUSTHeadlineHeight}{%
+  color(0pt)=(SUSTTopNavy);
+  color(.76\paperwidth)=(SUSTBlue);
+  color(\paperwidth)=(SUSTBlue)}
+
+% ---------- User quick-edit area: section titles ----------
+% 目录页、页眉导航和 \section 标题都读取这一组命令。
+% 修改章节结构时：
+% 1. 先改这里的六个标题；
+% 2. 再到正文区域调整对应的 \section 和 frame；
+% 3. 如果章节数量变化，需要同步修改 \SUSTOutline 与 \SUSTSectionNavigation。
+\newcommand{\SUSTSectionTitleOne}{模板说明}
+\newcommand{\SUSTSectionTitleTwo}{正文结构}
+\newcommand{\SUSTSectionTitleThree}{常用环境}
+\newcommand{\SUSTSectionTitleFour}{图表代码}
+\newcommand{\SUSTSectionTitleFive}{报告内容}
+\newcommand{\SUSTSectionTitleSix}{总结致谢}
+\makeatletter
+\newcommand{\SUSTSectionNavigationEntry}[2]{%
+  \beamer@section@set@min@width%
+  \box\beamer@sectionbox\hskip1.875ex plus 1fill%
+  \setbox\beamer@sectionbox=\hbox{%
+    \def\insertsectionhead{#2}%
+    \def\insertsectionheadnumber{#1}%
+    \def\insertpartheadnumber{0}%
+    {\usebeamerfont{section in head/foot}\usebeamercolor[fg]{section in head/foot}%
+      \ifnum\c@section=#1%
+        {\usebeamertemplate{section in head/foot}}%
+      \else%
+        {\usebeamertemplate{section in head/foot shaded}}%
+      \fi}%
+  }%
+  \ht\beamer@sectionbox=1.875ex%
+  \dp\beamer@sectionbox=0.75ex%
+}
+\newcommand{\SUSTSectionNavigation}[1]{%
+  \ifnum\value{section}=0
+    \hbox to #1{\usebeamerfont{section in head/foot}\color{white}\SUSTHeaderIntroText\hfil}%
+  \else
+    \hbox to #1{{%
+      \hskip0pt plus1filll\hskip.3cm%
+      \usebeamerfont{section in head/foot}\usebeamercolor[fg]{section in head/foot}%
+      \setbox\beamer@sectionbox=\hbox{}%
+      \ht\beamer@sectionbox=1.875ex%
+      \dp\beamer@sectionbox=0.75ex%
+      \hskip-1.875ex plus-1fill%
+      \SUSTSectionNavigationEntry{1}{\SUSTSectionTitleOne}%
+      \SUSTSectionNavigationEntry{2}{\SUSTSectionTitleTwo}%
+      \SUSTSectionNavigationEntry{3}{\SUSTSectionTitleThree}%
+      \SUSTSectionNavigationEntry{4}{\SUSTSectionTitleFour}%
+      \SUSTSectionNavigationEntry{5}{\SUSTSectionTitleFive}%
+      \SUSTSectionNavigationEntry{6}{\SUSTSectionTitleSix}%
+      \beamer@section@set@min@width%
+      \box\beamer@sectionbox\hfil\hskip.3cm%
+    }}%
+  \fi%
+}
+\makeatother
+\newcommand{\SUSTOutlineEntry}[3]{%
+  \noindent
+  \makebox[.86\textwidth][l]{%
+    \raisebox{.24ex}{%
+      \makebox[.46cm][r]{\color{SUSTBlue!78!SUSTTopNavy}\SUSTHei\fontsize{8.3}{8.8}\selectfont #2}%
+    }%
+    \hspace{.18cm}%
+    {\color{SUSTBlue!32}\rule[-.52ex]{.7pt}{2.55ex}}%
+    \hspace{.24cm}%
+    \hyperlink{sust-section-#1}{%
+      {\usebeamerfont{section in toc}\color{SUSTBlue}#3}%
+    }%
+  }%
+  \par\vspace{.24cm}%
+}
+\newcommand{\SUSTOutline}{%
+  \begin{minipage}{.86\textwidth}
+    \SUSTOutlineEntry{1}{01}{\SUSTSectionTitleOne}
+    \SUSTOutlineEntry{2}{02}{\SUSTSectionTitleTwo}
+    \SUSTOutlineEntry{3}{03}{\SUSTSectionTitleThree}
+    \SUSTOutlineEntry{4}{04}{\SUSTSectionTitleFour}
+    \SUSTOutlineEntry{5}{05}{\SUSTSectionTitleFive}
+    \SUSTOutlineEntry{6}{06}{\SUSTSectionTitleSix}
+  \end{minipage}%
+}
+
+\newcommand{\SUSTReferenceItem}[4]{%
+  \par\noindent
+  \hangindent=.56cm
+  \hangafter=1
+  \makebox[.48cm][l]{%
+    {\rmfamily\fontsize{7.2}{8}\selectfont\color{black}#1}%
+  }%
+  {%
+    \rmfamily\fontsize{7.2}{8}\selectfont
+    {\color{SUSTBlue!86!SUSTTopNavy}#2. }%
+    {\color{black}#3. }%
+    {\color{SUSTBlue!68}#4}%
+  }%
+  \par\vspace{.22cm}%
+}
+
+\newenvironment{SUSTReferenceList}{%
+  \vspace{.18cm}
+  \begingroup
+  \setlength{\parskip}{0pt}
+  \setlength{\parindent}{0pt}
+  \leftskip=.10cm
+  \rightskip=.10cm
+}{%
+  \par
+  \endgroup
+}
+
+\newcommand{\SUSTThanksPage}{%
+  {%
+    \usebackgroundtemplate{%
+      \SUSTPageCanvas{%
+        \fill[SUSTLightBlue] (0,0) rectangle (\paperwidth,-\paperheight);
+        \SUSTDrawBrand{sust-thanks}
+
+        \path[fill=SUSTBlue]
+          (0,-2.34cm)
+          rectangle (\paperwidth,-4.98cm);
+        \node[
+          anchor=center,
+          text=white,
+          align=center,
+          inner sep=0pt,
+          outer sep=0pt
+        ] at (.5\paperwidth,-3.66cm) {%
+          {\SUSTKai\fontsize{28}{31}\selectfont 谢谢}\\[.20cm]
+          {\SUSTKai\fontsize{10.8}{12.0}\selectfont\color{white!88}欢迎各位老师批评指正}%
+        };
+
+        \begin{scope}[shift={(0,-\paperheight)}]
+          \fill[SUSTTopNavy] (0,0) rectangle (\SUSTFootlineLeftHalfWidth,\SUSTFootlineTotalHeight);
+          \fill[SUSTBlue] (\SUSTFootlineLeftHalfWidth,0) rectangle (\paperwidth,\SUSTFootlineTotalHeight);
+          \draw[white!16,line width=.18pt]
+            (\SUSTFootlineLeftSegmentWidth,0) -- (\SUSTFootlineLeftSegmentWidth,\SUSTFootlineTotalHeight);
+          \draw[white!16,line width=.18pt]
+            (\SUSTFootlineLeftHalfWidth,0) -- (\SUSTFootlineLeftHalfWidth,\SUSTFootlineTotalHeight);
+          \draw[white!14,line width=.18pt]
+            (\dimexpr\SUSTFootlineLeftHalfWidth+\SUSTFootlineRightTitleWidth\relax,0)
+            -- (\dimexpr\SUSTFootlineLeftHalfWidth+\SUSTFootlineRightTitleWidth\relax,\SUSTFootlineTotalHeight);
+          \node[
+            text=white,
+            font=\usebeamerfont{author in head/foot},
+            inner sep=0pt
+          ] at (\SUSTFootlineNameCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterLeftText};
+          \node[
+            text=white,
+            font=\usebeamerfont{date in head/foot},
+            inner sep=0pt
+          ] at (\SUSTFootlineDateCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterMiddleText};
+          \node[
+            text=white,
+            font=\usebeamerfont{title in head/foot},
+            inner sep=0pt
+          ] at (\SUSTFootlineRightTitleCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterRightText};
+          \node[
+            anchor=east,
+            text=white,
+            font=\usebeamerfont{date in head/foot},
+            inner sep=0pt
+          ] at ([xshift=-.8ex]\paperwidth,\SUSTFootlineTextCenterY) {\insertframenumber{} / \SUSTTotalFrameNumber};
+        \end{scope}%
+      }%
+    }%
+    \begin{frame}[plain]
+    \end{frame}%
+  }%
+}
+
+\newcommand{\SUSTHeadlineBackground}{%
+  \begin{pgfpicture}{0pt}{0pt}{\paperwidth}{\SUSTHeadlineHeight}
+    \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\SUSTHeadlineHeight}}%
+    \pgfusepath{clip}%
+    \pgftext[left,base]{\pgfuseshading{sust@headlineshade}}%
+  \end{pgfpicture}%
+}
+
+\newcommand{\SUSTPageCanvas}[1]{%
+  \begin{tikzpicture}
+    \useasboundingbox (0,0) rectangle (\paperwidth,-\paperheight);
+    #1%
+  \end{tikzpicture}%
+}
+
+% ---------- Headline and footline ----------
+% 页眉：左侧显示章节导航；右侧显示学校简称和白色校徽。
+% 页脚：左半区姓名/日期等分，右半区按主模板比例分为副标题/页码；
+% 日期和副标题之间使用竖线分割，保持页脚边界干净。
+% 文字内容由上面的 \SUSTFooterLeftText 等三个命令控制。
+\makeatletter
+\providecommand{\insertframetitle}{}
+\providecommand{\insertframesubtitle}{}
+\setbeamertemplate{headline}{%
+  \leavevmode%
+  \begin{tikzpicture}[baseline]
+    \useasboundingbox (0,0) rectangle (\paperwidth,\SUSTFrameTitleBottom);
+    \path[shade,shading angle=0,left color=SUSTTopNavy,right color=SUSTBlue]
+      (0,\SUSTFrameTitleHeight) rectangle (\paperwidth,\SUSTFrameTitleBottom);
+    \node[anchor=west,inner sep=0pt] at
+      (.18cm,\dimexpr\SUSTFrameTitleHeight+.5\SUSTHeadlineHeight\relax)
+      {\SUSTSectionNavigation{\dimexpr.72\paperwidth-.28cm\relax}};
+    \node[anchor=east,inner sep=0pt] at
+      (\dimexpr\paperwidth-.48cm\relax,\dimexpr\SUSTFrameTitleHeight+.5\SUSTHeadlineHeight\relax)
+      {\SUSTHeaderBrand};
+    \fill[SUSTTitleBlue]
+      (0,0) rectangle (\paperwidth,\SUSTFrameTitleHeight);
+    \node[anchor=west,text=white,inner sep=0pt] at
+      (.34cm,.5\SUSTFrameTitleHeight)
+      {{\usebeamerfont{frametitle}\insertframetitle%
+        \ifx\insertframesubtitle\@empty%
+        \else%
+          \hspace{.18cm}{\color{white!62}\rule[-.2ex]{.05em}{1.7ex}}\hspace{.15cm}%
+          {\usebeamerfont{framesubtitle}\insertframesubtitle}%
+        \fi}};
+  \end{tikzpicture}%
+}%
+
+% ---------- Frame title ----------
+\setbeamertemplate{frametitle}{%
+}
+
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \begin{tikzpicture}[baseline]
+    \useasboundingbox (0,0) rectangle (\paperwidth,\SUSTFootlineTotalHeight);
+    \fill[SUSTTopNavy] (0,0) rectangle (\SUSTFootlineLeftHalfWidth,\SUSTFootlineTotalHeight);
+    \fill[SUSTBlue] (\SUSTFootlineLeftHalfWidth,0) rectangle (\paperwidth,\SUSTFootlineTotalHeight);
+    \draw[white!16,line width=.18pt]
+      (\SUSTFootlineLeftSegmentWidth,0) -- (\SUSTFootlineLeftSegmentWidth,\SUSTFootlineTotalHeight);
+    \draw[white!16,line width=.18pt]
+      (\SUSTFootlineLeftHalfWidth,0) -- (\SUSTFootlineLeftHalfWidth,\SUSTFootlineTotalHeight);
+    \draw[white!14,line width=.18pt]
+      (\dimexpr\SUSTFootlineLeftHalfWidth+\SUSTFootlineRightTitleWidth\relax,0)
+      -- (\dimexpr\SUSTFootlineLeftHalfWidth+\SUSTFootlineRightTitleWidth\relax,\SUSTFootlineTotalHeight);
+    \node[
+      text=white,
+      font=\usebeamerfont{author in head/foot},
+      inner sep=0pt
+    ] at (\SUSTFootlineNameCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterLeftText};
+    \node[
+      text=white,
+      font=\usebeamerfont{date in head/foot},
+      inner sep=0pt
+    ] at (\SUSTFootlineDateCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterMiddleText};
+    \node[
+      text=white,
+      font=\usebeamerfont{title in head/foot},
+      inner sep=0pt
+    ] at (\SUSTFootlineRightTitleCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterRightText};
+    \node[
+      anchor=east,
+      text=white,
+      font=\usebeamerfont{date in head/foot},
+      inner sep=0pt
+    ] at (\dimexpr\paperwidth-.8ex\relax,\SUSTFootlineTextCenterY) {\insertframenumber{} / \SUSTTotalFrameNumber};
+  \end{tikzpicture}%
+}
+\makeatother
+\setbeamertemplate{navigation symbols}{}
+
+% ---------- Blocks and lists ----------
+\tcbset{
+  sust beamer block/.style={
+    enhanced,
+    colback=SUSTBlockBody,
+    colbacktitle=SUSTBlockBody,
+    colframe=SUSTBlockLine,
+    boxrule=.45pt,
+    leftrule=2.2pt,
+    arc=1mm,
+    boxsep=0pt,
+    left=1.6mm,
+    right=1.8mm,
+    top=.9mm,
+    bottom=1.2mm,
+    toptitle=.45mm,
+    bottomtitle=.45mm,
+    titlerule=.3pt,
+    before skip=.7ex,
+    after skip=.9ex,
+    fonttitle=\SUSTKai\bfseries,
+    coltitle=SUSTTitleBlue,
+    title style={draw=none,fill=SUSTBlockBody}
+  },
+  sust beamer example block/.style={
+    sust beamer block,
+    colback=SUSTLightBlue,
+    colbacktitle=SUSTLightBlue,
+    colframe=SUSTBlue!62!SUSTTopNavy,
+    coltitle=SUSTBlue!78!SUSTTopNavy,
+    title style={draw=none,fill=SUSTLightBlue}
+  },
+  sust beamer alert block/.style={
+    sust beamer block,
+    colback=red!4,
+    colbacktitle=red!4,
+    colframe=red!58!SUSTTopNavy,
+    coltitle=red!58!SUSTTopNavy,
+    title style={draw=none,fill=red!4}
+  }
+}
+\setbeamertemplate{block begin}{%
+  \begin{tcolorbox}[sust beamer block,title=\insertblocktitle]%
+}
+\setbeamertemplate{block end}{%
+  \end{tcolorbox}%
+}
+\setbeamertemplate{block example begin}{%
+  \begin{tcolorbox}[sust beamer example block,title=\insertblocktitle]%
+}
+\setbeamertemplate{block example end}{%
+  \end{tcolorbox}%
+}
+\setbeamertemplate{block alerted begin}{%
+  \begin{tcolorbox}[sust beamer alert block,title=\insertblocktitle]%
+}
+\setbeamertemplate{block alerted end}{%
+  \end{tcolorbox}%
+}
+\setbeamertemplate{itemize item}{\color{SUSTBlue}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{black}$\bullet$}
+\setbeamertemplate{enumerate item}{%
+  \tikz[baseline=(n.base)]\node[circle,fill=SUSTBlue,text=white,inner sep=1.2pt,font=\scriptsize] (n) {\insertenumlabel};%
+}
+
+% ---------- Helper pages ----------
+\newcommand{\SUSTChapterPage}[2]{%
+  {%
+    \usebackgroundtemplate{%
+      \SUSTPageCanvas{%
+        \fill[SUSTLightBlue] (0,0) rectangle (\paperwidth,-\paperheight);
+        \fill[SUSTBlue] (0,-2.45cm) rectangle (\paperwidth,-4.22cm);
+        \node[
+          anchor=west,
+          text=white,
+          font=\SUSTKai\Large
+        ] at (.75cm,-2.88cm) {#1};
+        \node[
+          anchor=west,
+          text=white,
+          text width=.82\paperwidth,
+          font=\SUSTKai\fontsize{23}{25}\selectfont
+        ] at (.75cm,-3.73cm) {#2};
+        \SUSTDrawCornerMotto{.28}
+      }%
+    }%
+    \begin{frame}[plain]
+      \hypertarget{sust-section-\insertsectionnumber}{}
+    \end{frame}%
+  }%
+}
+
+\newcommand{\SUSTFigurePlaceholder}[1]{%
+  \begin{center}
+    \begin{tikzpicture}
+      \draw[SUSTBlue,rounded corners=3pt,line width=.5pt]
+        (0,0) rectangle (.78\textwidth,3.0cm);
+      \node[align=center,text=SUSTBlue,text width=.70\textwidth,font=\SUSTKai\small]
+        at (.39\textwidth,1.5cm) {#1};
+    \end{tikzpicture}
+  \end{center}
+}
+
+\AtBeginSection[]{
+  \SUSTChapterPage{第 \insertsectionnumber 部分}{\insertsection}
+}
+
+% ---------- Document content ----------
+% 从这里开始是实际幻灯片内容。
+% 新增页面：复制一个 \begin{frame}{页面标题} ... \end{frame}。
+% 新增章节：添加 \section{章节名}；若希望目录和页眉自动同步，请同时维护上面的章节标题命令。
+% 普通报告建议每页保留一个核心观点，图表页优先使用 columns 或 block 保持版面稳定。
+\begin{document}
+
+\begingroup
+  \usebackgroundtemplate{%
+    \SUSTPageCanvas{%
+    \fill[SUSTLightBlue] (0,0) rectangle (\paperwidth,-\paperheight);
+
+    \node[
+      anchor=west,
+      inner sep=0pt,
+      outer sep=0pt
+    ] (sust-cover-logo) at (.28cm,-.78cm)
+      {\includegraphics[height=1.08cm]{assets/sust_logo_blue.png}};
+    \node[
+      anchor=west,
+      inner sep=0pt,
+      outer sep=0pt
+    ] at ([xshift=.16cm]sust-cover-logo.east)
+      {\includegraphics[height=1.08cm]{assets/sust_name_blue.png}};
+
+    \path[fill=SUSTBlue]
+      (0,-2.34cm)
+      rectangle (\paperwidth,-4.98cm);
+    \node[
+      anchor=center,
+      align=center,
+      inner sep=0pt,
+      outer sep=0pt
+    ] at (.5\paperwidth,-3.66cm) {%
+      \begin{minipage}{.86\paperwidth}
+        \centering
+        {\SUSTKai\fontsize{17.2}{19.5}\selectfont\color{white}\ReportTitle\par}
+        \vspace{.26cm}
+        {\SUSTKai\fontsize{9.8}{11.0}\selectfont\color{white!88}\ReportSubtitle\par}
+      \end{minipage}%
+    };
+
+    \node[
+      anchor=north,
+      align=center,
+      inner sep=0pt,
+      outer sep=0pt
+    ] at (.5\paperwidth,-5.74cm) {%
+      \begin{minipage}{.56\paperwidth}
+        \centering
+        {\SUSTKai\fontsize{10.2}{13.2}\selectfont
+          \begin{tabular}{@{}r@{\hspace{.18cm}}l@{}}
+            {\color{SUSTBlue!78!SUSTTopNavy}汇报人：} & \AuthorName \\
+            {\color{SUSTBlue!78!SUSTTopNavy}指导教师：} & \SupervisorName \\
+            {\color{SUSTBlue!78!SUSTTopNavy}学院：} & \CollegeName \\
+            {\color{SUSTBlue!78!SUSTTopNavy}专业：} & \MajorName
+          \end{tabular}}%
+      \end{minipage}%
+    };
+
+    \begin{scope}[shift={(0,-\paperheight)}]
+      \fill[SUSTTopNavy] (0,0) rectangle (\SUSTFootlineLeftHalfWidth,\SUSTFootlineTotalHeight);
+      \fill[SUSTBlue] (\SUSTFootlineLeftHalfWidth,0) rectangle (\paperwidth,\SUSTFootlineTotalHeight);
+      \draw[white!16,line width=.18pt]
+        (\SUSTFootlineLeftSegmentWidth,0) -- (\SUSTFootlineLeftSegmentWidth,\SUSTFootlineTotalHeight);
+      \draw[white!16,line width=.18pt]
+        (\SUSTFootlineLeftHalfWidth,0) -- (\SUSTFootlineLeftHalfWidth,\SUSTFootlineTotalHeight);
+      \draw[white!14,line width=.18pt]
+        (\dimexpr\SUSTFootlineLeftHalfWidth+\SUSTFootlineRightTitleWidth\relax,0)
+        -- (\dimexpr\SUSTFootlineLeftHalfWidth+\SUSTFootlineRightTitleWidth\relax,\SUSTFootlineTotalHeight);
+      \node[
+        text=white,
+        font=\usebeamerfont{author in head/foot},
+        inner sep=0pt
+      ] at (\SUSTFootlineNameCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterLeftText};
+      \node[
+        text=white,
+        font=\usebeamerfont{date in head/foot},
+        inner sep=0pt
+      ] at (\SUSTFootlineDateCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterMiddleText};
+      \node[
+        text=white,
+        font=\usebeamerfont{title in head/foot},
+        inner sep=0pt
+      ] at (\SUSTFootlineRightTitleCenterX,\SUSTFootlineTextCenterY) {\SUSTFooterRightText};
+      \node[
+        anchor=east,
+        text=white,
+        font=\usebeamerfont{date in head/foot},
+        inner sep=0pt
+      ] at ([xshift=-.8ex]\paperwidth,\SUSTFootlineTextCenterY) {\insertframenumber{} / \SUSTTotalFrameNumber};
+    \end{scope}%
+    }%
+  }%
+  \begin{frame}[plain]
+  \end{frame}%
+\endgroup
+
+\begin{frame}{目录}
+  \vspace{.45cm}
+  \SUSTOutline
+\end{frame}
+
+\section{\SUSTSectionTitleOne}
+
+\begin{frame}{关于本模板}
+  \begin{block}{模板定位}
+    本文件是苏州科技大学组会报告 Beamer 模板示例。正文内容为占位演示，使用时请替换为自己的报告内容。
+  \end{block}
+
+  \begin{itemize}
+    \item 编译方式：使用 XeLaTeX 编译。
+    \item 替换位置：报告信息、章节标题、正文 frame、图表和参考文献。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{快速替换信息}
+  \begin{block}{封面信息}
+    请在文件开头的报告信息区替换题目、汇报人、指导教师、学院、专业和报告日期。
+  \end{block}
+
+  \begin{itemize}
+    \item \SUSTEmph{题目}：建议控制在两行以内。
+    \item \SUSTEmph{副标题}：用于封面右侧、目录页左上角和页脚第三栏，默认写作“组会报告”。
+    \item \SUSTEmph{正文}：建议每页只保留一个核心观点，避免从论文中整段复制。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{推荐报告结构}
+  \begin{block}{常见组织方式}
+    如果没有特殊要求，可以按“背景问题、理论方法、实验结果、案例分析、总结展望”的顺序组织。
+  \end{block}
+
+  \begin{enumerate}
+    \item 引出研究问题：说明问题来源、研究意义和主要困难。
+    \item 展示核心工作：说明主要方法、关键公式或主要模型。
+    \item 证明工作有效：用图表展示实验、案例和结论。
+  \end{enumerate}
+\end{frame}
+
+\section{\SUSTSectionTitleTwo}
+
+\begin{frame}{目录与章节页}
+  \begin{block}{自动结构}
+    本模板提供封面页、目录页、章节过渡页、正文页、参考文献页和结束页。
+  \end{block}
+
+  \begin{itemize}
+    \item 使用 \texttt{\textbackslash section} 创建一个新的报告部分。
+    \item 目录页会读取统一定义的章节标题。
+    \item 章节过渡页由 \texttt{\textbackslash AtBeginSection} 自动生成。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{列表与强调}
+  \begin{block}{无序列表}
+    适合放研究背景、问题来源、实验设置和结果解释。
+  \end{block}
+
+  \begin{itemize}
+    \item 普通信息：用常规列表说明背景和条件。
+    \item \SUSTEmph{重要信息}：用黑体强调关键词。
+    \item \alert{关键结论}：用 Beamer 的 alert 标记需要重点说明的结论。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{分栏排版}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{.46\textwidth}
+      \begin{block}{左栏}
+        可放研究问题、符号解释或方法流程。
+      \end{block}
+
+      \begin{itemize}
+        \item 内容一
+        \item 内容二
+        \item 内容三
+      \end{itemize}
+    \end{column}
+    \begin{column}{.46\textwidth}
+      \begin{block}{右栏}
+        可放图表说明、实验结论或补充解释。
+      \end{block}
+
+      \begin{enumerate}
+        \item 步骤一
+        \item 步骤二
+        \item 步骤三
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{\SUSTSectionTitleThree}
+
+\begin{frame}{块环境示例}
+  \begin{block}{普通 block}
+    用于说明定义、背景、方法说明或页面提示。
+  \end{block}
+
+  \begin{exampleblock}{example block}
+    用于展示示例、实验现象或模板用法。
+  \end{exampleblock}
+
+  \begin{alertblock}{alert block}
+    用于强调报告中需要老师注意的关键结论。
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{数学公式示例}
+  \begin{block}{行间公式}
+    数学报告中建议只放最核心的公式，并在公式下方解释符号含义。
+  \end{block}
+
+  \begin{equation*}
+    F(x)=\int_{a}^{b} f(t,x)\,\mathrm{d}t,
+    \qquad
+    \nabla F(x)=0.
+  \end{equation*}
+
+  \begin{itemize}
+    \item $x$ 表示待求变量或模型参数。
+    \item $F(x)$ 表示目标函数、统计量或评价指标。
+    \item 公式后的解释比复杂推导更适合报告场景。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{表格示例}
+  \begin{block}{三线表}
+    推荐使用 \texttt{booktabs} 风格的三线表，表格内容应服务于一个明确结论。
+  \end{block}
+
+  \begin{table}
+    \centering
+    \caption{示例表格}
+    \begin{tabular}{lcc}
+      \toprule
+      项目 & 指标一 & 指标二 \\
+      \midrule
+      方法一 & 0.812 & 0.764 \\
+      方法二 & 0.846 & 0.792 \\
+      示例方法 & \alert{0.879} & \alert{0.823} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\section{\SUSTSectionTitleFour}
+
+\begin{frame}{图示占位}
+  \SUSTFigurePlaceholder{此处替换为论文中的示意图、流程图、实验曲线、结果截图或案例图}
+
+  \begin{itemize}
+    \item 图片应尽量清晰，避免文字过小。
+    \item 一页只解释一个图的核心信息。
+    \item 图注可以简短说明图中变量或实验设置。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{代码示例}
+  \begin{block}{代码环境}
+    如需展示算法实现，可使用 \texttt{lstlisting}。报告中建议只展示关键片段。
+  \end{block}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize]
+def model_step(x, theta):
+    score = objective(x, theta)
+    return score
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{图片与表格并排}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{.48\textwidth}
+      \SUSTFigurePlaceholder{图示占位}
+    \end{column}
+    \begin{column}{.46\textwidth}
+      \begin{table}
+        \centering
+        \caption{配套表格}
+        \begin{tabular}{lc}
+          \toprule
+          项目 & 数值 \\
+          \midrule
+          指标一 & 0.86 \\
+          指标二 & 0.79 \\
+          指标三 & 0.92 \\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{\SUSTSectionTitleFive}
+
+\begin{frame}{研究背景页占位}
+  \begin{block}{替换提示}
+    用 3--4 条说明研究问题从哪里来、为什么值得研究，以及本文关注的核心困难。
+  \end{block}
+
+  \begin{itemize}
+    \item 背景来源：请替换为论文研究对象或实际问题。
+    \item 研究意义：请替换为理论价值或应用价值。
+    \item 关键困难：请替换为本文试图解决的主要问题。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{方法与实验页占位}
+  \begin{block}{替换提示}
+    先讲方法主线，再讲实验设计。可用流程图或表格压缩细节。
+  \end{block}
+
+  \begin{enumerate}
+    \item 方法：请替换为模型、算法、定理或证明思路。
+    \item 实验：请替换为数据来源、评价指标和对比方法。
+    \item 结论：请替换为实验图表支持的主要判断。
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{结论与展望页占位}
+  \begin{block}{替换提示}
+    报告结论建议控制在 3 条以内，每条对应前文一个主要贡献或实验发现。
+  \end{block}
+
+  \begin{itemize}
+    \item 主要结论一：请替换为本文完成的主要工作。
+    \item 主要结论二：请替换为理论、实验或应用层面的发现。
+    \item 后续展望：请替换为未来可以继续改进的方向。
+  \end{itemize}
+\end{frame}
+
+\section{\SUSTSectionTitleSix}
+
+\begin{frame}{使用前检查}
+  \begin{block}{建议检查项}
+    正式报告前建议完整编译并翻看 PDF，重点检查封面、页眉导航、图表清晰度和参考文献格式。
+  \end{block}
+
+  \begin{enumerate}
+    \item 替换所有占位信息和示例文字。
+    \item 检查图片路径、表格宽度和公式是否超出页面。
+    \item 确认页数、目录、参考文献和结束页符合学校或学院要求。
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{致谢页说明}
+  \begin{block}{结束页}
+    模板末尾提供统一风格的结束页，包含“谢谢”、提示语和报告信息。可根据需要修改结束页文字。
+  \end{block}
+
+  \begin{itemize}
+    \item 正式报告稿中可保留简洁的致谢页。
+    \item 如学校或学院要求固定结束语，请在 `\textbackslash SUSTThanksPage` 中统一修改。
+    \item 本页之后即为参考文献页和结束页。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t]{参考文献}
+  \scriptsize
+  \bibliographystyle{gbt7714-numerical}
+  \nocite{*}
+  \bibliography{references}
+\end{frame}
+
+\SUSTThanksPage
+
+\end{document}
